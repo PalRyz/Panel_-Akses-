@@ -9,7 +9,108 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',system-ui,-apple-system,sans-serif;-webkit-tap-highlight-color:transparent}
+*{
+  margin:0;padding:0;box-sizing:border-box;
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-touch-callout:none;
+}
+
+/* ===== Global Smoothness & No-Flash Polish ===== */
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:16px;
+  -webkit-text-size-adjust:100%;
+  overflow-x:hidden;
+  overflow-y:auto;
+  height:100%;
+}
+body{
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+  overflow-y:auto;
+  min-height:100%;
+}
+
+/* Selection color */
+::selection{background:rgba(168,85,247,.35);color:#fff}
+::-moz-selection{background:rgba(168,85,247,.35);color:#fff}
+
+/* No outline flash, custom focus ring */
+button,input,select,textarea,a{outline:none}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{
+  outline:2px solid rgba(168,85,247,.55);
+  outline-offset:2px;
+  border-radius:inherit;
+}
+button:focus:not(:focus-visible){outline:none}
+
+/* Kill blue tap flash on mobile */
+a,button,[role=button],input,select,textarea,label{
+  -webkit-tap-highlight-color:transparent !important;
+  -webkit-touch-callout:none;
+}
+
+/* Buttons don't show text-select highlight on click */
+button,[role=button],.btn,.icon-action,.icon-btn,.quick-btn,.hub-item,.dur-preset,.ban-reason,.pag-btn,.toggle-pw,.collapse-btn,.copy-key,.nav-item,.hub-toggle,.dashboard label,.checkbox-wrap,.brand-logo{
+  user-select:none;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+}
+
+/* Allow selecting actual text content */
+.key-cell,.key-text,.user-name,.user-id,.date-cell,.phone-num,.stat-value,h1,h2,h3,p,code,kbd,pre,td,th,input,textarea,.modal,.subtitle{
+  user-select:text;-webkit-user-select:text;
+}
+
+/* No flicker on active press for interactive controls */
+button,.btn,.icon-action,.icon-btn,.quick-btn,.hub-item,.dur-preset,.ban-reason,.pag-btn,.icon-mini,.brand-logo{
+  -webkit-touch-callout:none;
+  touch-action:manipulation;       /* removes 300ms tap delay + double-tap zoom */
+  will-change:transform;
+}
+
+/* Smooth active press (no abrupt color flash) */
+button:active:not(:disabled),
+.btn:active:not(:disabled),
+.icon-action:active:not(:disabled),
+.quick-btn:active:not(:disabled),
+.hub-item:active:not(:disabled){
+  transform:scale(.97);
+  transition:transform .08s ease-out;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.05s !important;
+    scroll-behavior:auto !important;
+  }
+  html{scroll-behavior:auto}
+}
+
+/* Momentum + smooth scroll for all scrollable areas */
+.table-container,
+.activity-list,
+.modal,
+.shortcut-list,
+#luaCodeBox,
+pre,
+[data-scroll]{
+  scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;     /* iOS momentum */
+  overscroll-behavior:contain;          /* no scroll chaining */
+  scrollbar-gutter:stable;
+}
+
+/* Modern, slimmer scrollbars (already present, but make smoother) */
+::-webkit-scrollbar-corner{background:transparent}
+* {scrollbar-width:thin;scrollbar-color:var(--bg-elevated) transparent}
 
 :root{
   --primary:#a855f7;--primary-dark:#7c3aed;--primary-light:#c4b5fd;--primary-glow:rgba(168,85,247,.4);
@@ -35,7 +136,6 @@
   --shadow-card:0 10px 40px -10px rgba(168,85,247,.25),0 0 0 1px rgba(168,85,247,.1);
 }
 
-html,body{overflow-x:hidden}
 body{min-height:100vh;background:var(--bg-dark);color:var(--text-primary);transition:background .4s ease,color .4s ease;line-height:1.5}
 
 /* SVG Icons */
@@ -120,23 +220,277 @@ body{min-height:100vh;background:var(--bg-dark);color:var(--text-primary);transi
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .container{max-width:1500px;margin:0 auto}
 
-/* Header */
-.header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:18px;padding:14px 18px;background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);backdrop-filter:blur(12px)}
-.title-section{display:flex;align-items:center;gap:14px}
-.title-section .brand-mark{width:48px;height:48px;animation:none}
-.title-section h1{font-size:19px;font-weight:800;background:linear-gradient(135deg,var(--text-primary),var(--primary-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.3px;display:flex;align-items:center;gap:8px}
-.title-section .pro-tag{background:var(--grad-rainbow);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:800;letter-spacing:1px;-webkit-text-fill-color:#fff}
-.title-section .subtitle{font-size:11px;color:var(--text-muted);font-weight:500;margin-top:2px;display:block}
+/* ===== Premium Glass Header Card ===== */
+.header{
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  gap:24px;
+  margin-bottom:24px;
+  padding:18px 24px;
+  background:linear-gradient(135deg,rgba(168,85,247,.07),rgba(236,72,153,.05) 50%,rgba(59,130,246,.07));
+  background-color:var(--bg-card);
+  border-radius:24px;
+  border:1px solid var(--border);
+  backdrop-filter:blur(22px) saturate(160%);
+  -webkit-backdrop-filter:blur(22px) saturate(160%);
+  box-shadow:
+    0 10px 40px rgba(0,0,0,.32),
+    0 0 0 1px rgba(168,85,247,.05),
+    inset 0 1px 0 rgba(255,255,255,.05);
+  position:relative;
+  overflow:hidden;
+  animation:headerIn .7s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes headerIn{from{opacity:0;transform:translateY(-14px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+/* Ambient corner glows */
+.header::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(900px 220px at 0% 0%,rgba(168,85,247,.1),transparent 60%),
+             radial-gradient(700px 220px at 100% 100%,rgba(236,72,153,.08),transparent 60%);
+  pointer-events:none;
+}
+/* Animated top accent line */
+.header::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:1.5px;
+  background:linear-gradient(90deg,transparent 0%,#a855f7 25%,#ec4899 50%,#a855f7 75%,transparent 100%);
+  background-size:200% 100%;
+  animation:headerAccent 4s linear infinite;
+  pointer-events:none;
+}
+@keyframes headerAccent{
+  0%{background-position:-100% 0;opacity:.4}
+  50%{opacity:.9}
+  100%{background-position:100% 0;opacity:.4}
+}
 
-.header-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.owner-info{display:flex;align-items:center;gap:8px;background:var(--bg-input);padding:7px 10px 7px 7px;border-radius:50px;font-size:12px;color:var(--text-secondary);font-weight:500}
-.owner-info .icon-mini{width:24px;height:24px;background:var(--grad-primary);border-radius:50%;display:grid;place-items:center;font-size:12px;color:#fff}
-.owner-info button{background:var(--primary);border:none;color:#fff;padding:5px 10px;border-radius:20px;font-size:10.5px;font-weight:600;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:4px}
-.owner-info button:hover{background:var(--primary-dark);transform:scale(1.05)}
+/* Title + Logo (left side) */
+.title-section{display:flex;align-items:center;gap:18px;min-width:0;position:relative;z-index:1}
 
-.icon-action{width:38px;height:38px;border-radius:50%;background:var(--bg-input);border:1px solid var(--border);color:var(--text-secondary);cursor:pointer;display:grid;place-items:center;font-size:16px;transition:all .25s;position:relative}
-.icon-action:hover{background:var(--bg-elevated);color:var(--primary-light);transform:translateY(-2px);border-color:var(--primary)}
-.icon-action.has-badge::after{content:attr(data-badge);position:absolute;top:-4px;right:-4px;background:var(--danger);color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:10px;min-width:16px;text-align:center;line-height:1.2}
+/* Premium animated brand logo */
+.brand-logo{
+  width:56px;height:56px;flex-shrink:0;position:relative;
+  display:grid;place-items:center;
+  filter:drop-shadow(0 8px 22px var(--primary-glow));
+}
+.brand-logo svg{width:100%;height:100%;overflow:visible}
+.brand-logo::before{
+  content:'';position:absolute;inset:-6px;border-radius:50%;
+  background:radial-gradient(circle,rgba(168,85,247,.35),transparent 65%);
+  filter:blur(8px);opacity:.7;z-index:-1;
+  animation:logoHalo 3.5s ease-in-out infinite;
+}
+@keyframes logoHalo{
+  0%,100%{opacity:.4;transform:scale(1)}
+  50%{opacity:.85;transform:scale(1.12)}
+}
+/* Shield gentle float */
+.brand-logo .bm-shield{
+  transform-origin:60px 60px;
+  animation:bmFloat 4s ease-in-out infinite;
+}
+@keyframes bmFloat{
+  0%,100%{transform:translateY(0) rotate(0)}
+  50%{transform:translateY(-2px) rotate(-1deg)}
+}
+/* Glow pulse */
+.brand-logo .bm-glow{
+  transform-origin:60px 60px;
+  animation:bmGlow 3s ease-in-out infinite;
+}
+@keyframes bmGlow{
+  0%,100%{opacity:.35;transform:scale(.95)}
+  50%{opacity:.9;transform:scale(1.08)}
+}
+/* Orbit ring rotation */
+.brand-logo .bm-orbit{
+  transform-origin:60px 60px;
+  animation:bmOrbit 12s linear infinite;
+}
+@keyframes bmOrbit{
+  from{transform:rotate(0)}
+  to{transform:rotate(360deg)}
+}
+/* Shackle subtle bounce + lock click */
+.brand-logo .bm-shackle{
+  transform-origin:60px 56px;
+  animation:bmShackle 5s cubic-bezier(.5,.05,.5,.95) infinite;
+}
+@keyframes bmShackle{
+  0%,60%,100%{transform:translateY(0)}
+  70%{transform:translateY(-3px)}
+  78%{transform:translateY(0)}
+  86%{transform:translateY(-1.5px)}
+  92%{transform:translateY(0)}
+}
+/* Twinkling sparkles */
+.brand-logo .bm-sparkles circle{
+  transform-origin:center;transform-box:fill-box;
+  animation:bmTwinkle 2.2s ease-in-out infinite;
+}
+.brand-logo .bm-sparkles circle:nth-child(1){animation-delay:0s}
+.brand-logo .bm-sparkles circle:nth-child(2){animation-delay:.55s}
+.brand-logo .bm-sparkles circle:nth-child(3){animation-delay:1.1s}
+.brand-logo .bm-sparkles circle:nth-child(4){animation-delay:1.65s}
+@keyframes bmTwinkle{
+  0%,100%{opacity:0;transform:scale(.3)}
+  50%{opacity:1;transform:scale(1.4)}
+}
+.header:hover .brand-logo{filter:drop-shadow(0 10px 28px rgba(236,72,153,.45)) drop-shadow(0 0 30px var(--primary-glow))}
+.header:hover .brand-logo .bm-shield{animation-duration:1.6s}
+/* (removed harsh scale on logo press — handled by global smooth press) */
+.title-text{display:flex;flex-direction:column;gap:4px;min-width:0}
+.title-section h1{
+  font-size:23px;font-weight:800;letter-spacing:-.6px;line-height:1.1;
+  display:flex;align-items:center;gap:10px;white-space:nowrap;margin:0;
+}
+.title-section h1 .brand-name{
+  background:linear-gradient(135deg,#fff 0%,#e9d5ff 50%,#c4b5fd 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  background-size:200% auto;
+  animation:nameShine 6s linear infinite;
+}
+@keyframes nameShine{
+  0%{background-position:0% 50%}
+  100%{background-position:200% 50%}
+}
+.title-section .pro-tag{
+  position:relative;
+  background:linear-gradient(135deg,#a855f7,#ec4899);
+  color:#fff;font-size:9.5px;padding:3.5px 10px 3.5px 18px;border-radius:8px;
+  font-weight:800;letter-spacing:1.4px;
+  box-shadow:0 4px 14px rgba(168,85,247,.4),inset 0 1px 0 rgba(255,255,255,.25);
+  text-transform:uppercase;flex-shrink:0;
+  display:inline-flex;align-items:center;
+}
+.title-section .pro-tag .dot{
+  position:absolute;left:7px;top:50%;transform:translateY(-50%);
+  width:6px;height:6px;border-radius:50%;background:#fff;
+  box-shadow:0 0 0 0 rgba(255,255,255,.7);
+  animation:proDot 2s ease-out infinite;
+}
+@keyframes proDot{
+  0%{box-shadow:0 0 0 0 rgba(255,255,255,.7)}
+  70%{box-shadow:0 0 0 6px rgba(255,255,255,0)}
+  100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}
+}
+.title-section .subtitle{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:11.5px;color:var(--text-secondary);font-weight:500;
+  opacity:.75;letter-spacing:.15px;line-height:1.3;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.title-section .sub-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--success);flex-shrink:0;
+  box-shadow:0 0 8px var(--success);
+  animation:subDot 2s ease-in-out infinite;
+}
+@keyframes subDot{
+  0%,100%{opacity:.5;transform:scale(.85)}
+  50%{opacity:1;transform:scale(1.15)}
+}
+
+/* Right action area (compact horizontal row) */
+.header-actions{display:flex;align-items:center;gap:12px;flex-wrap:nowrap;position:relative;z-index:1}
+
+/* Phone pill — compact glass chip */
+.owner-info{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 6px 6px 12px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  border-radius:999px;
+  font-size:12.5px;color:var(--text-primary);font-weight:600;
+  backdrop-filter:blur(10px);
+  transition:all .25s cubic-bezier(.16,1,.3,1);
+  white-space:nowrap;
+  letter-spacing:.2px;
+}
+.owner-info:hover{
+  border-color:var(--border-strong);
+  background:rgba(255,255,255,.06);
+  transform:translateY(-1px);
+}
+.owner-info .icon-mini{
+  width:24px;height:24px;background:var(--grad-primary);border-radius:50%;
+  display:grid;place-items:center;font-size:12px;color:#fff;flex-shrink:0;
+  box-shadow:0 3px 10px var(--primary-glow);
+}
+.owner-info .phone-num{font-variant-numeric:tabular-nums;font-family:'JetBrains Mono',monospace;font-size:11.5px}
+.owner-info button{
+  background:var(--grad-primary);border:none;color:#fff;
+  padding:6px 12px;border-radius:999px;
+  font-size:11px;font-weight:700;cursor:pointer;
+  transition:all .22s cubic-bezier(.16,1,.3,1);
+  display:inline-flex;align-items:center;gap:5px;
+  letter-spacing:.3px;
+  box-shadow:0 4px 12px rgba(168,85,247,.3);
+  white-space:nowrap;flex-shrink:0;
+}
+.owner-info button:hover{
+  transform:translateY(-1px) scale(1.03);
+  box-shadow:0 6px 18px rgba(168,85,247,.45);
+}
+.owner-info button:active{transform:translateY(0) scale(1)}
+.owner-info button .ic{font-size:11px}
+
+/* Divider between phone and icon buttons */
+.header-divider{
+  width:1px;height:32px;flex-shrink:0;
+  background:linear-gradient(180deg,transparent,rgba(168,85,247,.4),transparent);
+  position:relative;
+}
+.header-divider::after{
+  content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:3px;height:3px;border-radius:50%;background:var(--primary-light);
+  box-shadow:0 0 8px var(--primary-light);
+  opacity:.6;
+}
+
+/* Action icon row — equal-size, balanced */
+.icon-row{
+  display:inline-flex;align-items:center;gap:6px;padding:5px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  border-radius:999px;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+  transition:border-color .3s,background .3s;
+}
+.icon-row:hover{border-color:var(--border-strong);background:rgba(255,255,255,.06)}
+.icon-action{
+  width:36px;height:36px;border-radius:50%;
+  background:transparent;border:none;
+  color:var(--text-secondary);cursor:pointer;
+  display:grid;place-items:center;
+  transition:all .25s cubic-bezier(.16,1,.3,1);
+  position:relative;
+  font-family:inherit;
+}
+.icon-action .ic{font-size:16px;transition:transform .25s}
+.icon-action:hover{
+  background:rgba(168,85,247,.12);
+  color:var(--primary-light);
+}
+.icon-action:hover .ic{transform:scale(1.1)}
+.icon-action:active .ic{transform:scale(.95)}
+.icon-action.active{
+  background:var(--grad-primary);color:#fff;
+  box-shadow:0 4px 14px var(--primary-glow);
+}
+.icon-action.has-badge::after{
+  content:attr(data-badge);position:absolute;top:1px;right:1px;
+  background:var(--danger);color:#fff;
+  font-size:9px;font-weight:800;padding:1px 5px;border-radius:10px;
+  min-width:16px;text-align:center;line-height:1.3;
+  box-shadow:0 0 0 2px var(--bg-card);
+  animation:badgePulse 2s ease-in-out infinite;
+}
+@keyframes badgePulse{
+  0%,100%{box-shadow:0 0 0 2px var(--bg-card),0 0 0 0 rgba(239,68,68,.5)}
+  50%{box-shadow:0 0 0 2px var(--bg-card),0 0 0 6px rgba(239,68,68,0)}
+}
 
 /* Stat Cards Grid */
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:18px}
@@ -302,6 +656,63 @@ th input[type=checkbox],td input[type=checkbox]{width:16px;height:16px;accent-co
 /* Footer */
 .footer-tools{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding:14px 16px;background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);margin-bottom:14px}
 .footer-tools .btn-group{display:flex;gap:8px;flex-wrap:wrap}
+
+/* Modern Action Hub */
+.action-hub{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);margin-bottom:14px;overflow:hidden;position:relative}
+.action-hub::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad-rainbow);background-size:200% 100%;animation:shimmer 4s linear infinite;opacity:.6}
+.hub-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,var(--bg-card-hover),transparent);flex-wrap:wrap;gap:10px}
+.hub-title{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--text-primary)}
+.hub-title .ic{color:var(--primary-light);font-size:16px}
+.hub-title .hub-sub{font-size:11px;color:var(--text-muted);font-weight:500;margin-left:6px}
+.hub-quick{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.quick-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:700;border:none;cursor:pointer;transition:all .25s cubic-bezier(.16,1,.3,1);white-space:nowrap;letter-spacing:.2px;color:#fff;position:relative;overflow:hidden;font-family:inherit}
+.quick-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transition:left .6s}
+.quick-btn:hover::before{left:100%}
+.quick-btn:hover{transform:translateY(-2px)}
+.quick-btn .ic{font-size:14px}
+.quick-btn.sync{background:var(--grad-cloud);box-shadow:0 6px 18px rgba(59,130,246,.35)}
+.quick-btn.lua{background:var(--grad-orange);box-shadow:0 6px 18px rgba(251,146,60,.35)}
+
+/* Menu sections */
+.hub-body{padding:14px 16px}
+.hub-sections{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.hub-section{background:var(--bg-input);border-radius:var(--radius-sm);padding:12px;border:1px solid transparent;transition:all .25s}
+.hub-section:hover{border-color:var(--border-strong);transform:translateY(-1px)}
+.hub-section.danger-zone{background:rgba(239,68,68,.04);border-color:rgba(239,68,68,.15)}
+.hub-section.danger-zone:hover{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.07)}
+.hub-section-title{display:flex;align-items:center;gap:7px;font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px dashed var(--border)}
+.hub-section.danger-zone .hub-section-title{color:var(--danger)}
+.hub-section-title .badge-mini{margin-left:auto;background:var(--primary);color:#fff;font-size:9px;padding:2px 6px;border-radius:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.hub-section.danger-zone .badge-mini{background:var(--danger)}
+
+.hub-items{display:grid;gap:6px}
+.hub-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:8px;background:var(--bg-card);border:1px solid transparent;color:var(--text-primary);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s;text-align:left;width:100%;font-family:inherit;position:relative}
+.hub-item:hover{background:var(--bg-elevated);border-color:var(--primary);transform:translateX(3px)}
+.hub-item .hub-icon{width:28px;height:28px;border-radius:7px;background:var(--bg-input);display:grid;place-items:center;color:var(--primary-light);flex-shrink:0;transition:all .2s;font-size:14px}
+.hub-item:hover .hub-icon{background:var(--grad-primary);color:#fff;transform:scale(1.08)}
+.hub-item .hub-label{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.hub-item .hub-label .lbl{font-weight:700;font-size:12.5px;line-height:1.2;color:var(--text-primary)}
+.hub-item .hub-label .desc{font-size:10.5px;color:var(--text-muted);font-weight:500;line-height:1.2}
+.hub-item .hub-chev{color:var(--text-muted);font-size:14px;transition:all .2s}
+.hub-item:hover .hub-chev{color:var(--primary-light);transform:translateX(3px)}
+.hub-item.danger{color:var(--danger)}
+.hub-item.danger:hover{background:rgba(239,68,68,.1);border-color:var(--danger)}
+.hub-item.danger:hover .hub-icon{background:var(--grad-danger);color:#fff}
+.hub-item.danger .hub-icon{color:var(--danger);background:rgba(239,68,68,.1)}
+.hub-item.danger:hover .hub-chev{color:var(--danger)}
+.hub-item.warning{color:var(--warning)}
+.hub-item.warning .hub-icon{color:var(--warning);background:rgba(245,158,11,.1)}
+.hub-item.warning:hover{background:rgba(245,158,11,.1);border-color:var(--warning)}
+.hub-item.warning:hover .hub-icon{background:var(--grad-orange);color:#fff}
+.hub-item.warning:hover .hub-chev{color:var(--warning)}
+
+/* Compact mode toggle */
+.hub-toggle{background:var(--bg-input);border:1px solid var(--border);color:var(--text-secondary);padding:6px 10px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:600;display:inline-flex;align-items:center;gap:5px;transition:all .2s;font-family:inherit}
+.hub-toggle:hover{background:var(--bg-elevated);color:var(--primary-light);border-color:var(--primary)}
+.hub-toggle .ic{transition:transform .3s}
+.hub-toggle.collapsed .ic{transform:rotate(-90deg)}
+.collapsible-hub{overflow:hidden;transition:max-height .4s ease,opacity .3s,padding .3s}
+.collapsible-hub.collapsed{max-height:0;opacity:0;padding-top:0;padding-bottom:0}
 .storage-info{font-size:10.5px;color:var(--text-muted);text-align:center;margin-top:14px;opacity:.7;padding:0 16px;line-height:1.7}
 .storage-info code{background:var(--bg-input);padding:1px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;color:var(--primary-light);font-size:10px}
 .storage-info kbd{background:var(--bg-input);padding:1px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;color:var(--primary-light);font-size:10px;border:1px solid var(--border)}
@@ -325,6 +736,7 @@ th input[type=checkbox],td input[type=checkbox]{width:16px;height:16px;accent-co
 /* Modal */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:none;justify-content:center;align-items:center;z-index:1000;padding:20px;animation:fadeIn .25s}
 .modal-overlay.active{display:flex}
+body.modal-open{overflow:hidden !important;padding-right:var(--scrollbar-w,0px)}
 .modal{background:var(--bg-card);border-radius:var(--radius-lg);padding:24px;width:100%;max-width:430px;border:1px solid var(--border);animation:modalIn .35s cubic-bezier(.16,1,.3,1);max-height:90vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,.5)}
 .modal.modal-lg{max-width:580px}
 .modal.modal-xl{max-width:720px}
@@ -410,9 +822,22 @@ th input[type=checkbox],td input[type=checkbox]{width:16px;height:16px;accent-co
   .footer-tools{flex-direction:column}
   .footer-tools .btn-group{width:100%;justify-content:center}
   .footer-tools>.btn{width:100%;justify-content:center}
-  .header{padding:12px 14px}
-  .title-section h1{font-size:15px}
-  .owner-info{font-size:11px}
+  .hub-header{flex-direction:column;align-items:stretch}
+  .hub-quick{width:100%}
+  .quick-btn{flex:1;justify-content:center}
+  .hub-sections{grid-template-columns:1fr}
+  .header{grid-template-columns:1fr;gap:16px;padding:16px;border-radius:22px}
+  .title-section{justify-content:flex-start;gap:14px}
+  .brand-logo{width:48px;height:48px}
+  .title-section h1{font-size:19px}
+  .title-section .subtitle{font-size:11px}
+  .header-actions{justify-content:space-between;width:100%;gap:8px;flex-wrap:wrap}
+  .owner-info{flex:1;min-width:0;justify-content:space-between;font-size:11.5px;padding:5px 5px 5px 10px}
+  .owner-info .phone-num{overflow:hidden;text-overflow:ellipsis}
+  .header-divider{display:none}
+  .icon-row{padding:3px;gap:6px}
+  .icon-action{width:34px;height:34px}
+  .icon-action .ic{font-size:15px}
   .search-box{width:100%}
   .search-box:focus{width:100%}
   .stat-card{padding:12px}
@@ -421,7 +846,8 @@ th input[type=checkbox],td input[type=checkbox]{width:16px;height:16px;accent-co
 }
 @media(max-width:420px){
   .stat-grid{grid-template-columns:1fr 1fr}
-  .header-actions{width:100%;justify-content:flex-end}
+  .owner-info{flex-basis:100%}
+  .icon-row{flex-basis:100%;justify-content:center}
 }
 
 /* Scrollbar */
@@ -438,15 +864,70 @@ th input[type=checkbox],td input[type=checkbox]{width:16px;height:16px;accent-co
 <defs>
   <symbol id="i-logo" viewBox="0 0 100 100">
     <defs>
-      <linearGradient id="lg-pri" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#a855f7"/><stop offset="100%" stop-color="#6d28d9"/></linearGradient>
-      <linearGradient id="lg-sec" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c4b5fd"/><stop offset="100%" stop-color="#a855f7"/></linearGradient>
+      <linearGradient id="lg-pri" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c084fc"/><stop offset="50%" stop-color="#a855f7"/><stop offset="100%" stop-color="#6d28d9"/></linearGradient>
+      <linearGradient id="lg-sec" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f3e8ff"/><stop offset="100%" stop-color="#c4b5fd"/></linearGradient>
+      <linearGradient id="lg-shackle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e9d5ff"/><stop offset="100%" stop-color="#a855f7"/></linearGradient>
+      <radialGradient id="lg-shine" cx="35%" cy="30%" r="60%"><stop offset="0%" stop-color="#fff" stop-opacity=".5"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient>
     </defs>
+    <!-- Outer shield -->
     <path d="M50 5L10 20V45C10 68 28 88 50 95C72 88 90 68 90 45V20L50 5Z" fill="url(#lg-pri)"/>
-    <path d="M50 12L18 24V45C18 64 32 81 50 87C68 81 82 64 82 45V24L50 12Z" fill="#120e1f"/>
-    <rect x="34" y="44" width="32" height="26" rx="5" fill="url(#lg-sec)"/>
-    <path d="M40 44V39C40 32.4 45.4 27 52 27C58.6 27 64 32.4 64 39V44" stroke="url(#lg-sec)" stroke-width="4" fill="none" stroke-linecap="round"/>
-    <circle cx="50" cy="55" r="3.5" fill="#120e1f"/>
-    <rect x="48.25" y="55" width="3.5" height="9" rx="1.5" fill="#120e1f"/>
+    <!-- Inner shield (darker bg) -->
+    <path d="M50 12L18 24V45C18 64 32 81 50 87C68 81 82 64 82 45V24L50 12Z" fill="#0f0a1f"/>
+    <!-- Padlock shackle (U-shape) -->
+    <path d="M40 44V39C40 32.4 45.4 27 52 27C58.6 27 64 32.4 64 39V44" stroke="url(#lg-shackle)" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+    <!-- Padlock body -->
+    <rect x="33" y="43" width="34" height="28" rx="6" fill="url(#lg-sec)"/>
+    <!-- Subtle highlight on body -->
+    <rect x="33" y="43" width="34" height="14" rx="6" fill="url(#lg-shine)"/>
+    <!-- Keyhole circle -->
+    <circle cx="50" cy="55" r="3.8" fill="#0f0a1f"/>
+    <!-- Keyhole slot -->
+    <rect x="48" y="55" width="4" height="9" rx="1.8" fill="#0f0a1f"/>
+  </symbol>
+  <!-- Animated brand logo (used in header only) -->
+  <symbol id="i-logo-anim" viewBox="0 0 120 120">
+    <defs>
+      <linearGradient id="bl-shield" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#d8b4fe"/><stop offset="40%" stop-color="#a855f7"/><stop offset="100%" stop-color="#6d28d9"/></linearGradient>
+      <linearGradient id="bl-body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fdf4ff"/><stop offset="100%" stop-color="#c4b5fd"/></linearGradient>
+      <linearGradient id="bl-shackle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f3e8ff"/><stop offset="100%" stop-color="#a855f7"/></linearGradient>
+      <linearGradient id="bl-ring" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#a855f7" stop-opacity="0"/><stop offset="50%" stop-color="#a855f7" stop-opacity=".9"/><stop offset="100%" stop-color="#ec4899" stop-opacity="0"/></linearGradient>
+      <radialGradient id="bl-glow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#a855f7" stop-opacity=".55"/><stop offset="100%" stop-color="#a855f7" stop-opacity="0"/></radialGradient>
+      <radialGradient id="bl-shine" cx="35%" cy="28%" r="55%"><stop offset="0%" stop-color="#fff" stop-opacity=".55"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient>
+      <filter id="bl-blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter>
+    </defs>
+    <!-- Glow halo -->
+    <circle class="bm-glow" cx="60" cy="60" r="56" fill="url(#bl-glow)"/>
+    <!-- Rotating dashed orbit ring -->
+    <circle class="bm-orbit" cx="60" cy="60" r="54" fill="none" stroke="url(#bl-ring)" stroke-width="1.5" stroke-dasharray="3 6" opacity=".75"/>
+    <!-- Sparkles -->
+    <g class="bm-sparkles">
+      <circle cx="100" cy="22" r="1.8" fill="#f3e8ff"/>
+      <circle cx="22" cy="98" r="1.4" fill="#ec4899"/>
+      <circle cx="98" cy="92" r="1.2" fill="#a855f7"/>
+      <circle cx="20" cy="30" r="1.6" fill="#c4b5fd"/>
+    </g>
+    <!-- Shield group with floating -->
+    <g class="bm-shield">
+      <!-- Soft shadow -->
+      <path d="M60 16L23 30V53C23 73 39 91 60 97C81 91 97 73 97 53V30L60 16Z" fill="#000" opacity=".35" filter="url(#bl-blur)" transform="translate(0,3)"/>
+      <!-- Outer shield -->
+      <path d="M60 16L23 30V53C23 73 39 91 60 97C81 91 97 73 97 53V30L60 16Z" fill="url(#bl-shield)"/>
+      <!-- Inner shield -->
+      <path d="M60 22L29 33V53C29 70 42 86 60 91C78 86 91 70 91 53V33L60 22Z" fill="#15102a"/>
+      <!-- Inner sheen -->
+      <path d="M60 22L29 33V47C29 47 44 52 60 52C76 52 91 47 91 47V33L60 22Z" fill="url(#bl-shine)" opacity=".5"/>
+      <!-- Padlock shackle (animated bounce) -->
+      <path class="bm-shackle" d="M48 56V49C48 42.4 53.4 37 60 37C66.6 37 72 42.4 72 49V56" stroke="url(#bl-shackle)" stroke-width="4.8" fill="none" stroke-linecap="round"/>
+      <!-- Padlock body -->
+      <rect x="40" y="55" width="40" height="32" rx="7" fill="url(#bl-body)"/>
+      <!-- Body highlight -->
+      <rect x="40" y="55" width="40" height="16" rx="7" fill="url(#bl-shine)"/>
+      <!-- Keyhole -->
+      <circle cx="60" cy="68" r="4.2" fill="#15102a"/>
+      <rect x="58" y="68" width="4" height="11" rx="2" fill="#15102a"/>
+      <!-- Tiny accent dot -->
+      <circle cx="60" cy="50" r="1" fill="#fff" opacity=".5"/>
+    </g>
   </symbol>
   <symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
   <symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
@@ -542,7 +1023,7 @@ th input[type=checkbox],td input[type=checkbox]{width:16px;height:16px;accent-co
         <div class="btn-spinner"></div>
       </button>
     </form>
-    <div class="login-footer">Premium: <kbd>Beli Vip</kbd> / <kbd>Dm Tiktok</kbd></div>
+    <div class="login-footer">Default: <kbd>admin</kbd> / <kbd>palryz2025</kbd></div>
   </div>
 </div>
 
@@ -550,26 +1031,36 @@ th input[type=checkbox],td input[type=checkbox]{width:16px;height:16px;accent-co
 <div class="dashboard" id="dashboard">
   <div class="container">
 
-    <!-- Header -->
-    <div class="header">
+    <!-- Premium Glass Header -->
+    <header class="header">
       <div class="title-section">
-        <svg class="brand-mark"><use href="#i-logo"/></svg>
-        <div>
-          <h1>PalRyz <span class="pro-tag">PRO</span></h1>
-          <span class="subtitle">Access Vault · Ban & Expire System</span>
+        <div class="brand-logo" aria-label="PalRyz logo">
+          <svg viewBox="0 0 120 120" aria-hidden="true"><use href="#i-logo-anim"/></svg>
+        </div>
+        <div class="title-text">
+          <h1>
+            <span class="brand-name">PalRyz</span>
+            <span class="pro-tag"><span class="dot"></span>PRO</span>
+          </h1>
+          <span class="subtitle"><span class="sub-dot"></span>Access Vault &middot; Ban &amp; Expire System</span>
         </div>
       </div>
       <div class="header-actions">
-        <div class="owner-info">
+        <div class="owner-info" title="Owner contact">
           <div class="icon-mini"><svg class="ic" style="font-size:13px"><use href="#i-phone"/></svg></div>
-          <span>+6283117156906</span>
-          <button id="copyOwnerBtn"><svg class="ic" style="font-size:11px"><use href="#i-copy"/></svg>Salin</button>
+          <span class="phone-num">+6283117156906</span>
+          <button id="copyOwnerBtn" aria-label="Salin nomor owner">
+            <svg class="ic"><use href="#i-copy"/></svg>Salin
+          </button>
         </div>
-        <button class="icon-action theme-toggle" id="themeToggle" title="Ganti tema (Ctrl+T)"><svg class="ic"><use href="#i-moon"/></svg></button>
-        <button class="icon-action" id="activityBtn" title="Activity Log" data-badge="0"><svg class="ic"><use href="#i-bell"/></svg></button>
-        <button class="icon-action" id="helpBtn" title="Shortcut (?)"><svg class="ic"><use href="#i-help"/></svg></button>
+        <span class="header-divider" aria-hidden="true"></span>
+        <div class="icon-row" role="toolbar" aria-label="Quick actions">
+          <button class="icon-action theme-toggle" id="themeToggle" title="Ganti tema (Ctrl+T)" aria-label="Toggle theme"><svg class="ic"><use href="#i-moon"/></svg></button>
+          <button class="icon-action" id="activityBtn" title="Activity Log" data-badge="0" aria-label="Activity log"><svg class="ic"><use href="#i-bell"/></svg></button>
+          <button class="icon-action" id="helpBtn" title="Shortcut (?)" aria-label="Help"><svg class="ic"><use href="#i-help"/></svg></button>
+        </div>
       </div>
-    </div>
+    </header>
 
     <!-- Stats -->
     <div class="stat-grid">
@@ -717,21 +1208,114 @@ th input[type=checkbox],td input[type=checkbox]{width:16px;height:16px;accent-co
       </div>
     </div>
 
-    <!-- Footer -->
-    <div class="footer-tools">
-      <div class="btn-group">
-        <button class="btn btn-outline" id="exportJsonBtn"><svg class="ic"><use href="#i-export"/></svg>Export JSON</button>
-        <button class="btn btn-outline" id="exportCsvBtn"><svg class="ic"><use href="#i-csv"/></svg>Export CSV</button>
-        <button class="btn btn-outline" id="importBtn"><svg class="ic"><use href="#i-import"/></svg>Import</button>
-        <button class="btn btn-outline" id="refreshListBtn"><svg class="ic"><use href="#i-refresh"/></svg>Refresh</button>
-        <button class="btn btn-outline" id="backupBtn"><svg class="ic"><use href="#i-save"/></svg>Backup</button>
-        <button class="btn btn-cloud" id="syncCloudBtn"><svg class="ic"><use href="#i-cloud-up"/></svg>Sync ke Cloud</button>
-        <button class="btn btn-orange" id="luaScriptBtn"><svg class="ic"><use href="#i-game"/></svg>Lua Script</button>
+    <!-- Modern Action Hub -->
+    <div class="action-hub">
+      <div class="hub-header">
+        <div class="hub-title">
+          <svg class="ic"><use href="#i-settings"/></svg>
+          Action Hub
+          <span class="hub-sub">Kelola data, sync, dan akun</span>
+        </div>
+        <div class="hub-quick">
+          <button class="quick-btn sync" id="syncCloudBtn"><svg class="ic"><use href="#i-cloud-up"/></svg>Sync Cloud</button>
+          <button class="quick-btn lua" id="luaScriptBtn"><svg class="ic"><use href="#i-game"/></svg>Lua Script</button>
+          <button class="hub-toggle" id="hubToggleBtn"><svg class="ic"><use href="#i-chev-down"/></svg>Tutup</button>
+        </div>
       </div>
-      <div class="btn-group">
-        <button class="btn btn-warning" id="changePwBtn"><svg class="ic"><use href="#i-lock"/></svg>Ganti Password</button>
-        <button class="btn btn-danger" id="clearAllBtn"><svg class="ic"><use href="#i-alert"/></svg>Clear All</button>
-        <button class="btn btn-danger" id="logoutBtn"><svg class="ic"><use href="#i-logout"/></svg>Logout</button>
+
+      <div class="hub-body collapsible-hub" id="hubBody">
+        <div class="hub-sections">
+
+          <!-- Data Management -->
+          <div class="hub-section">
+            <div class="hub-section-title">
+              <svg class="ic" style="font-size:13px"><use href="#i-database"/></svg>
+              Data Management
+              <span class="badge-mini">4</span>
+            </div>
+            <div class="hub-items">
+              <button class="hub-item" id="exportJsonBtn">
+                <div class="hub-icon"><svg class="ic"><use href="#i-export"/></svg></div>
+                <div class="hub-label"><span class="lbl">Export JSON</span><span class="desc">Format Roblox compatible</span></div>
+                <span class="hub-chev">›</span>
+              </button>
+              <button class="hub-item" id="exportCsvBtn">
+                <div class="hub-icon"><svg class="ic"><use href="#i-csv"/></svg></div>
+                <div class="hub-label"><span class="lbl">Export CSV</span><span class="desc">Untuk Excel/Spreadsheet</span></div>
+                <span class="hub-chev">›</span>
+              </button>
+              <button class="hub-item" id="importBtn">
+                <div class="hub-icon"><svg class="ic"><use href="#i-import"/></svg></div>
+                <div class="hub-label"><span class="lbl">Import JSON</span><span class="desc">Upload data dari file</span></div>
+                <span class="hub-chev">›</span>
+              </button>
+              <button class="hub-item" id="backupBtn">
+                <div class="hub-icon"><svg class="ic"><use href="#i-save"/></svg></div>
+                <div class="hub-label"><span class="lbl">Backup Snapshot</span><span class="desc">Simpan max 5 versi</span></div>
+                <span class="hub-chev">›</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Maintenance -->
+          <div class="hub-section">
+            <div class="hub-section-title">
+              <svg class="ic" style="font-size:13px"><use href="#i-refresh"/></svg>
+              Maintenance
+              <span class="badge-mini">2</span>
+            </div>
+            <div class="hub-items">
+              <button class="hub-item" id="refreshListBtn">
+                <div class="hub-icon"><svg class="ic"><use href="#i-refresh"/></svg></div>
+                <div class="hub-label"><span class="lbl">Refresh Tabel</span><span class="desc">Reload tampilan user</span></div>
+                <span class="hub-chev">›</span>
+              </button>
+              <button class="hub-item" id="loadCloudHubBtn">
+                <div class="hub-icon"><svg class="ic"><use href="#i-cloud-down"/></svg></div>
+                <div class="hub-label"><span class="lbl">Load dari Cloud</span><span class="desc">Sync data terbaru</span></div>
+                <span class="hub-chev">›</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Account -->
+          <div class="hub-section">
+            <div class="hub-section-title">
+              <svg class="ic" style="font-size:13px"><use href="#i-shield"/></svg>
+              Account
+              <span class="badge-mini">2</span>
+            </div>
+            <div class="hub-items">
+              <button class="hub-item warning" id="changePwBtn">
+                <div class="hub-icon"><svg class="ic"><use href="#i-lock"/></svg></div>
+                <div class="hub-label"><span class="lbl">Ganti Password</span><span class="desc">Update password admin</span></div>
+                <span class="hub-chev">›</span>
+              </button>
+              <button class="hub-item warning" id="logoutBtn">
+                <div class="hub-icon"><svg class="ic"><use href="#i-logout"/></svg></div>
+                <div class="hub-label"><span class="lbl">Logout</span><span class="desc">Keluar dari dashboard</span></div>
+                <span class="hub-chev">›</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Danger Zone -->
+          <div class="hub-section danger-zone">
+            <div class="hub-section-title">
+              <svg class="ic" style="font-size:13px"><use href="#i-alert"/></svg>
+              Danger Zone
+              <span class="badge-mini">1</span>
+            </div>
+            <div class="hub-items">
+              <button class="hub-item danger" id="clearAllBtn">
+                <div class="hub-icon"><svg class="ic"><use href="#i-trash"/></svg></div>
+                <div class="hub-label"><span class="lbl">Clear All Users</span><span class="desc">Hapus semua data lokal</span></div>
+                <span class="hub-chev">›</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
 
@@ -1023,7 +1607,7 @@ th input[type=checkbox],td input[type=checkbox]{width:16px;height:16px;accent-co
 'use strict';
 
 const KEYS={AUTH:"PalRyz_Auth",USERS:"PalRyz_Users_DB",CONFIG:"PalRyz_Config",THEME:"PalRyz_Theme",ACTIVITY:"PalRyz_Activity",ADMIN_PW:"PalRyz_AdminPw",AUTOSYNC:"PalRyz_AutoSync",LAST_SYNC:"PalRyz_LastSync",BACKUPS:"PalRyz_Backups"};
-const DEFAULTS={username:"palryz",password:"palryz16",binId:"6a2c1494da38895dfeb52ef2",apiKey:"$2a$10$xSMwCb5yai.NSWkfvxVPv.SdBIq6jsdgWoym1Z9XItqNudWwNOnkS"};
+const DEFAULTS={username:"admin",password:"palryz2025",binId:"6a2c1494da38895dfeb52ef2",apiKey:"$2a$10$xSMwCb5yai.NSWkfvxVPv.SdBIq6jsdgWoym1Z9XItqNudWwNOnkS"};
 const UNIT_MS={minutes:60000,hours:3600000,days:86400000,weeks:604800000,months:2592000000};
 
 let users=[];
@@ -1563,9 +2147,41 @@ async function refreshLuaCode(){
 // ---------- Periodic refresh for expiry display ----------
 setInterval(()=>{if($('dashboard').classList.contains('active'))updateStats()},30000);
 
+// ---------- Smooth helpers ----------
+function lockBodyScroll(){
+  const sw=window.innerWidth-document.documentElement.clientWidth;
+  if(sw>0)document.documentElement.style.setProperty('--scrollbar-w',sw+'px');
+  document.body.classList.add('modal-open');
+}
+function unlockBodyScroll(){
+  document.body.classList.remove('modal-open');
+  document.documentElement.style.removeProperty('--scrollbar-w');
+}
+// Auto body-lock whenever any modal opens/closes (uses MutationObserver)
+function observeModals(){
+  const update=()=>{
+    const anyActive=document.querySelector('.modal-overlay.active');
+    if(anyActive)lockBodyScroll(); else unlockBodyScroll();
+  };
+  document.querySelectorAll('.modal-overlay').forEach(m=>{
+    new MutationObserver(update).observe(m,{attributes:true,attributeFilter:['class']});
+  });
+  // Safety: clear any stale lock on init
+  update();
+}
+// Smooth scroll util
+function smoothScrollTo(el,offset){
+  if(!el)return;
+  const top=el.getBoundingClientRect().top+window.pageYOffset-(offset||16);
+  window.scrollTo({top,behavior:'smooth'});
+}
+// Safety: force-unlock body scroll on init (kill any stale state)
+document.body.classList.remove('modal-open');
+
 // ---------- Init ----------
 document.addEventListener('DOMContentLoaded',()=>{
   loadTheme();loadActivity();
+  observeModals();
   setTimeout(()=>{
     if(checkAuth()){$('loginPage').style.display='none';$('dashboard').classList.add('active');loadConfig();loadUsers()}
     $('loadingScreen').classList.add('hidden');
@@ -1625,6 +2241,17 @@ document.addEventListener('DOMContentLoaded',()=>{
   $('backupBtn').addEventListener('click',saveBackup);
   $('syncCloudBtn').addEventListener('click',()=>syncToCloud(false));
   $('loadCloudBtn').addEventListener('click',loadFromCloud);
+  // Hub mirror button → same as loadFromCloud
+  const _loadCloudHubBtn=$('loadCloudHubBtn');if(_loadCloudHubBtn)_loadCloudHubBtn.addEventListener('click',loadFromCloud);
+
+  // Action Hub collapse toggle
+  $('hubToggleBtn').addEventListener('click',()=>{
+    const body=$('hubBody');const btn=$('hubToggleBtn');
+    body.classList.toggle('collapsed');btn.classList.toggle('collapsed');
+    const collapsed=body.classList.contains('collapsed');
+    btn.innerHTML=`<svg class="ic"><use href="#i-chev-down"/></svg>${collapsed?'Buka':'Tutup'}`;
+    if(collapsed)btn.classList.add('collapsed');
+  });
   $('testConnBtn').addEventListener('click',testConnection);
   $('clearAllBtn').addEventListener('click',()=>confirmAction('Hapus SEMUA user?','Akan menghapus semua data lokal. Backup dulu jika perlu!',()=>{users=[];saveUsers();renderTable();logActivity('delete','Semua user dihapus (clear all)');showToast('Semua user dihapus','warning')}));
   $('logoutBtn').addEventListener('click',()=>confirmAction('Logout sekarang?','Anda harus login ulang untuk akses dashboard.',logout));
@@ -1759,7 +2386,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     showToast('Script .lua didownload','success');
     logActivity('export','Lua script .lua didownload');
   });
-  $('luaLoadstringBtn').addEventListener('click',()=>{navigator.clipboard.writeText('loadstring(game:HttpGet("https://pastebin.com/raw/LREU9AkW", true))()');showToast('Template loadstring disalin','info')});
+  $('luaLoadstringBtn').addEventListener('click',()=>{navigator.clipboard.writeText('loadstring(game:HttpGet("PASTE_RAW_URL_HERE", true))()');showToast('Template loadstring disalin','info')});
   $('luaCloseBtn').addEventListener('click',()=>$('luaModal').classList.remove('active'));
   $('luaModal').addEventListener('click',e=>{if(e.target.id==='luaModal')$('luaModal').classList.remove('active')});
 
