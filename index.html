@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0a0814">
-<title>PalRyz Access Manager · Pro v3</title>
+<title>PalRyz Access Manager · Pro V3.2</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23a855f7'/%3E%3Cstop offset='1' stop-color='%236d28d9'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M50 5L10 20v25c0 23 18 43 40 50 22-7 40-27 40-50V20L50 5z' fill='url(%23g)'/%3E%3Crect x='35' y='45' width='30' height='25' rx='4' fill='%23ede9fe'/%3E%3Cpath d='M40 45v-5c0-6.6 5.4-12 12-12s12 5.4 12 12v5' stroke='%23ede9fe' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
@@ -1381,29 +1381,15 @@ html.scrolling .particle{
   -webkit-overflow-scrolling:touch;
   scrollbar-width:thin;
   contain:layout style;
-  /* Soft fade on right edge as scroll affordance */
-  background:
-    linear-gradient(90deg,transparent 95%,rgba(168,85,247,.06) 100%);
-  position:relative;
 }
-/* Right-edge gradient fade — visual cue that there's more to scroll */
 .table-wrapper{position:relative}
-.table-wrapper::after{
-  content:'';position:absolute;top:55px;right:0;bottom:55px;width:40px;
-  background:linear-gradient(90deg,transparent,rgba(22,17,40,.85));
-  pointer-events:none;border-top-right-radius:16px;border-bottom-right-radius:16px;
-  opacity:0;transition:opacity .25s;
-}
-.table-wrapper.has-overflow::after{opacity:1}
-@media(min-width:1000px){.table-wrapper::after{display:none}}
-table{width:100%;border-collapse:collapse;min-width:980px;table-layout:auto}
-/* Actions column always gets enough room and sticks visually on the right */
-th:last-child,td:last-child{padding-right:18px}
-.action-buttons{min-width:270px}
-th{text-align:left;padding:12px 14px;background:var(--bg-card-hover);font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:.7px;color:var(--text-secondary);white-space:nowrap;position:sticky;top:0;z-index:5;border-bottom:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;min-width:680px;table-layout:auto}
+/* Actions column */
+th:last-child,td:last-child{padding-right:14px;text-align:right}
+th{text-align:left;padding:11px 10px;background:var(--bg-card-hover);font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:.7px;color:var(--text-secondary);white-space:nowrap;position:sticky;top:0;z-index:5;border-bottom:1px solid var(--border)}
 th.sortable{cursor:pointer;user-select:none;transition:color .2s}
 th.sortable:hover{color:var(--primary-light)}
-td{padding:12px 14px;border-bottom:1px solid rgba(168,85,247,.05);font-size:13px;vertical-align:middle}
+td{padding:11px 10px;border-bottom:1px solid rgba(168,85,247,.05);font-size:13px;vertical-align:middle}
 tr{transition:background .2s}
 tr{transition:background-color .25s var(--ease-out-expo)}
 tr td{transition:background-color .25s var(--ease-out-expo),color .25s var(--ease-out-expo)}
@@ -1415,8 +1401,8 @@ tr.expired td{background:rgba(245,158,11,.04)}
 th.check-col,td.check-col{width:40px;text-align:center;padding-right:6px;padding-left:14px}
 th input[type=checkbox],td input[type=checkbox]{width:16px;height:16px;accent-color:var(--primary);cursor:pointer}
 
-.user-cell{display:flex;align-items:center;gap:10px;min-width:0;max-width:240px}
-.avatar{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0;text-transform:uppercase;letter-spacing:.5px;position:relative}
+.user-cell{display:flex;align-items:center;gap:9px;min-width:0;max-width:180px}
+.avatar{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-weight:700;font-size:12px;color:#fff;flex-shrink:0;text-transform:uppercase;letter-spacing:.5px;position:relative}
 .avatar.banned-av{filter:grayscale(.7)}
 .avatar .ban-overlay{position:absolute;inset:0;background:rgba(239,68,68,.5);border-radius:10px;display:grid;place-items:center;color:#fff;font-size:14px}
 .user-meta{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1;overflow:hidden}
@@ -1449,23 +1435,68 @@ th input[type=checkbox],td input[type=checkbox]{width:16px;height:16px;accent-co
 .strength-label{font-size:10px;margin-left:6px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
 .strength-weak{color:#ef4444}.strength-fair{color:#f59e0b}.strength-good{color:#3b82f6}.strength-strong{color:#22c55e}
 
+/* Action buttons — single straight row, no diagonal wrap */
 .action-buttons{
-  display:flex;gap:3px;flex-wrap:wrap;
+  display:flex;gap:3px;
   align-items:center;justify-content:flex-end;
+  flex-wrap:nowrap;
   min-width:0;
+  position:relative;
 }
 .icon-btn{
   background:rgba(168,85,247,.06);
   border:1px solid transparent;
-  font-size:14px;cursor:pointer;
-  padding:6px 7px;border-radius:8px;
+  font-size:13px;cursor:pointer;
+  padding:0;border-radius:8px;
   transition:transform .2s var(--ease-out-expo),background-color .2s var(--ease-out-expo),color .2s var(--ease-out-expo),border-color .2s var(--ease-out-expo);
   color:var(--text-secondary);
   display:grid;place-items:center;
-  width:30px;height:30px;
+  width:28px;height:28px;
   flex-shrink:0;
 }
-.icon-btn:hover{background:rgba(168,85,247,.14);border-color:rgba(168,85,247,.25)}
+.icon-btn:hover{background:rgba(168,85,247,.16);border-color:rgba(168,85,247,.3)}
+.icon-btn .ic{font-size:13px}
+
+/* Dropdown "more" menu for secondary actions */
+.action-more{position:relative}
+.action-more .more-pop{
+  position:absolute;
+  top:calc(100% + 6px);right:0;
+  background:rgba(22,17,40,.98);
+  border:1px solid var(--border-strong);
+  border-radius:12px;
+  padding:5px;
+  display:none;flex-direction:column;gap:2px;
+  z-index:20;
+  min-width:160px;
+  box-shadow:0 18px 50px rgba(0,0,0,.5),0 0 0 1px rgba(168,85,247,.2);
+  opacity:0;transform:translateY(-6px) scale(.96);
+  transition:opacity .2s var(--ease-out-expo),transform .2s var(--ease-out-expo);
+}
+[data-theme="light"] .action-more .more-pop{background:#fff;color:var(--text-primary)}
+.action-more.open .more-pop{
+  display:flex;
+  opacity:1;transform:translateY(0) scale(1);
+}
+.more-item{
+  display:flex;align-items:center;gap:9px;
+  padding:8px 11px;border-radius:8px;
+  background:transparent;border:none;cursor:pointer;
+  color:var(--text-primary);
+  font-size:12px;font-weight:600;
+  font-family:inherit;
+  transition:background-color .2s;
+  white-space:nowrap;text-align:left;
+}
+.more-item:hover{background:rgba(168,85,247,.12)}
+.more-item .ic{font-size:13px;color:var(--primary-light);flex-shrink:0;width:14px}
+.more-item.danger{color:var(--danger)}
+.more-item.danger .ic{color:var(--danger)}
+.more-item.warning{color:var(--warning)}
+.more-item.warning .ic{color:var(--warning)}
+.more-item.success{color:var(--success)}
+.more-item.success .ic{color:var(--success)}
+.more-divider{height:1px;background:var(--border);margin:3px 4px}
 .icon-btn:hover{background:var(--bg-elevated);transform:scale(1.15)}
 .icon-btn.edit-btn:hover{color:var(--warning)}
 .icon-btn.delete-btn:hover{color:var(--danger)}
@@ -2509,6 +2540,7 @@ body.modal-open{overflow:hidden !important}
   <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></symbol>
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
   <symbol id="i-crown" viewBox="0 0 24 24"><path d="M2 6l4 8 6-10 6 10 4-8-2 14H4z"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.6" class="ic-fill"/><circle cx="12" cy="12" r="1.6" class="ic-fill"/><circle cx="12" cy="19" r="1.6" class="ic-fill"/></symbol>
   <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v3h-4M14 21h3v-3M21 21h-2"/></symbol>
   <symbol id="i-dice" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.2" class="ic-fill"/><circle cx="16" cy="8" r="1.2" class="ic-fill"/><circle cx="12" cy="12" r="1.2" class="ic-fill"/><circle cx="8" cy="16" r="1.2" class="ic-fill"/><circle cx="16" cy="16" r="1.2" class="ic-fill"/></symbol>
   <symbol id="i-import" viewBox="0 0 24 24"><polyline points="9 11 12 14 15 11"/><line x1="12" y1="14" x2="12" y2="3"/><path d="M3 16v3a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3"/></symbol>
@@ -2596,7 +2628,7 @@ body.modal-open{overflow:hidden !important}
     <div class="login-header">
       <svg class="brand-mark"><use href="#i-logo"/></svg>
       <h1>PalRyz Access Manager</h1>
-      <div><span class="badge-pill">PRO · v3.0</span></div>
+      <div><span class="badge-pill">PRO · V3.2.0</span></div>
       <p>Silakan masuk untuk melanjutkan</p>
     </div>
     <div class="error-message" id="errorMessage"><svg class="ic"><use href="#i-alert"/></svg><span id="errorText">Username atau password salah!</span></div>
@@ -2614,7 +2646,7 @@ body.modal-open{overflow:hidden !important}
       </div>
       <div class="remember-row">
         <label class="checkbox-wrap"><input type="checkbox" id="rememberMe"> Ingat saya (7 hari)</label>
-        <span style="color:var(--text-muted);font-size:11px">v3.0 Pro</span>
+        <span style="color:var(--text-muted);font-size:11px">V3.2.0 Pro</span>
       </div>
       <button type="submit" class="login-btn" id="loginBtn">
         <span class="btn-text"><svg class="ic" style="font-size:16px;margin-right:6px"><use href="#i-shield"/></svg>Masuk Sekarang</span>
@@ -3227,7 +3259,7 @@ body.modal-open{overflow:hidden !important}
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));gap:10px;margin-top:6px">
           <div style="background:var(--bg-input);padding:12px 14px;border-radius:12px;border:1px solid var(--border)">
             <div style="font-size:10.5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:4px">Version</div>
-            <div style="font-size:14px;font-weight:700;color:var(--primary-light)">v3.0 PRO</div>
+            <div style="font-size:14px;font-weight:700;color:var(--primary-light)">V3.2.0 PRO</div>
           </div>
           <div style="background:var(--bg-input);padding:12px 14px;border-radius:12px;border:1px solid var(--border)">
             <div style="font-size:10.5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:4px">Storage</div>
@@ -3235,7 +3267,7 @@ body.modal-open{overflow:hidden !important}
           </div>
           <div style="background:var(--bg-input);padding:12px 14px;border-radius:12px;border:1px solid var(--border)">
             <div style="font-size:10.5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:4px">Cloud</div>
-            <div style="font-size:14px;font-weight:700;color:var(--info)">JSONBin v3</div>
+            <div style="font-size:14px;font-weight:700;color:var(--info)">JSONBin V3.2</div>
           </div>
           <div style="background:var(--bg-input);padding:12px 14px;border-radius:12px;border:1px solid var(--border)">
             <div style="font-size:10.5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:4px">Features</div>
@@ -3573,7 +3605,7 @@ body.modal-open{overflow:hidden !important}
     <p class="modal-sub">Script siap pakai untuk Roblox executor. Bin ID & API Key otomatis terisi. Verifikasi <strong>banned</strong> & <strong>expiresAt</strong> sudah include.</p>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
       <div class="form-group" style="margin:0"><label><svg class="ic"><use href="#i-phone"/></svg>Owner Number</label><input type="text" id="luaOwnerInput" value="+6283117156906"></div>
-      <div class="form-group" style="margin:0"><label><svg class="ic"><use href="#i-link"/></svg>Get-Key / WA Channel</label><input type="text" id="luaGetkeyInput" value="https://whatsapp.com/channel/0029Vb8ot6p0G0XhpcJc8y3N"></div>
+      <div class="form-group" style="margin:0"><label><svg class="ic"><use href="#i-link"/></svg>Get-Key / WA Channel</label><input type="text" id="luaGetkeyInput" value="https://whatsapp.com/channel/0029VbCuzyeKwqSZ26Jjt22k"></div>
       <div class="form-group" style="margin:0"><label><svg class="ic"><use href="#i-link"/></svg>Telegram Link</label><input type="text" id="luaTelegramInput" value="https://t.me/palryz_official"></div>
       <div class="form-group" style="margin:0"><label><svg class="ic"><use href="#i-link"/></svg>Discord Invite</label><input type="text" id="luaDiscordInput" value="https://discord.gg/SxQdEnDaa"></div>
       <div class="form-group" style="margin:0;grid-column:span 2"><label><svg class="ic"><use href="#i-sparkles"/></svg>Logo Asset ID (rbxassetid://...)</label><input type="text" id="luaLogoInput" value="rbxassetid://86630345971959"></div>
@@ -3602,7 +3634,7 @@ body.modal-open{overflow:hidden !important}
 
 <script>
 /* ============================================================
-   PalRyz Access Manager · v3.0 Pro
+   PalRyz Access Manager · V3.2.0 Pro
    - Ban System (with reason + expiry)
    - Key Expiration (minutes / hours / days / weeks / months)
    - Modern SVG icons (no emoji)
@@ -3612,7 +3644,7 @@ body.modal-open{overflow:hidden !important}
 'use strict';
 
 const KEYS={AUTH:"PalRyz_Auth",USERS:"PalRyz_Users_DB",CONFIG:"PalRyz_Config",THEME:"PalRyz_Theme",ACTIVITY:"PalRyz_Activity",ADMIN_PW:"PalRyz_AdminPw",AUTOSYNC:"PalRyz_AutoSync",LAST_SYNC:"PalRyz_LastSync",BACKUPS:"PalRyz_Backups"};
-const DEFAULTS={username:"admin",password:"palryz2025",binId:"6a2c1494da38895dfeb52ef2",apiKey:"$2a$10$xSMwCb5yai.NSWkfvxVPv.SdBIq6jsdgWoym1Z9XItqNudWwNOnkS"};
+const DEFAULTS={username:"PalRyz",password:"palryz321",binId:"6a2c1494da38895dfeb52ef2",apiKey:"$2a$10$xSMwCb5yai.NSWkfvxVPv.SdBIq6jsdgWoym1Z9XItqNudWwNOnkS"};
 const UNIT_MS={minutes:60000,hours:3600000,days:86400000,weeks:604800000,months:2592000000};
 
 let users=[];
@@ -3656,13 +3688,11 @@ function buildAccessCard(username,key){
     '│  🚀  LOADER SCRIPT   │',
     '└─────────────────────┘',
     `loadstring(game:HttpGet("${loader}"))()`,
-    'Salin scriptnya',
     '',
     '┌─────────────────────┐',
     '│  🔑  ACCESS KEY      │',
     '└─────────────────────┘',
     `${k}`,
-    'Salin Keynya',
     '',
     '┌─────────────────────┐',
     '│  📊  SESSION INFO    │',
@@ -4109,15 +4139,23 @@ function renderTable(){
       <td>${expireBadge(u)}</td>
       <td class="date-cell">${new Date(u.createdAt).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'2-digit'})}<span class="ago">${timeAgo(u.createdAt)}</span></td>
       <td><div class="action-buttons">
-        <button class="icon-btn copy-user" data-user="${escapeHtml(u.username)}" title="Salin Username saja">${svgIcon('user')}</button>
-        <button class="icon-btn copy-key" data-key="${escapeHtml(u.key)}" data-user="${escapeHtml(u.username)}" title="Salin Access Card (formatted)">${svgIcon('copy')}</button>
-        <button class="icon-btn toggle-show" data-idx="${idx}" title="Show/Hide Key">${svgIcon('eye')}</button>
-        <button class="icon-btn regen-key" data-idx="${idx}" title="Regenerate Key">${svgIcon('refresh')}</button>
-        <button class="icon-btn extend-btn" data-idx="${idx}" title="Extend Expiry">${svgIcon('clock-plus')}</button>
-        <button class="icon-btn view-qr" data-idx="${idx}" title="QR Code">${svgIcon('qr')}</button>
-        ${u.banned?`<button class="icon-btn unban-btn" data-idx="${idx}" title="Unban">${svgIcon('check')}</button>`:`<button class="icon-btn ban-btn" data-idx="${idx}" title="Ban User">${svgIcon('ban')}</button>`}
+        <button class="icon-btn copy-key" data-key="${escapeHtml(u.key)}" data-user="${escapeHtml(u.username)}" title="Salin Access Card">${svgIcon('copy')}</button>
         <button class="icon-btn edit-btn" data-idx="${idx}" title="Edit">${svgIcon('edit')}</button>
         <button class="icon-btn delete-btn" data-idx="${idx}" title="Hapus">${svgIcon('trash')}</button>
+        <div class="action-more">
+          <button class="icon-btn more-btn" data-idx="${idx}" title="Aksi lainnya">${svgIcon('more')}</button>
+          <div class="more-pop">
+            <button class="more-item copy-user" data-user="${escapeHtml(u.username)}">${svgIcon('user')}<span>Salin Username</span></button>
+            <button class="more-item toggle-show" data-idx="${idx}">${svgIcon('eye')}<span>Show / Hide Key</span></button>
+            <button class="more-item regen-key" data-idx="${idx}">${svgIcon('refresh')}<span>Regenerate Key</span></button>
+            <button class="more-item warning extend-btn" data-idx="${idx}">${svgIcon('clock-plus')}<span>Extend Expiry</span></button>
+            <button class="more-item view-qr" data-idx="${idx}">${svgIcon('qr')}<span>QR Code</span></button>
+            <div class="more-divider"></div>
+            ${u.banned
+              ?`<button class="more-item success unban-btn" data-idx="${idx}">${svgIcon('check')}<span>Unban User</span></button>`
+              :`<button class="more-item danger ban-btn" data-idx="${idx}">${svgIcon('ban')}<span>Ban User</span></button>`}
+          </div>
+        </div>
       </div></td>
     </tr>`;
   });
@@ -4142,16 +4180,23 @@ function renderTable(){
   $$('.unban-btn').forEach(b=>b.addEventListener('click',()=>{const i=parseInt(b.dataset.idx);confirmAction(`Unban "${users[i].username}"?`,'User akan bisa login kembali.',()=>unbanUser(i))}));
   $$('.extend-btn').forEach(b=>b.addEventListener('click',()=>openExtendModal([parseInt(b.dataset.idx)])));
 
-  renderPagination(filtered.length,totalPages);
+  // Dropdown "more" toggle
+  $$('.more-btn').forEach(b=>b.addEventListener('click',e=>{
+    e.stopPropagation();
+    const wrap=b.closest('.action-more');
+    if(!wrap)return;
+    const isOpen=wrap.classList.contains('open');
+    // Close all open dropdowns
+    document.querySelectorAll('.action-more.open').forEach(x=>x.classList.remove('open'));
+    if(!isOpen)wrap.classList.add('open');
+  }));
+  // Auto-close dropdown when clicking inside an item (action will fire then close)
+  $$('.action-more .more-item').forEach(b=>b.addEventListener('click',()=>{
+    const wrap=b.closest('.action-more');
+    if(wrap)setTimeout(()=>wrap.classList.remove('open'),0);
+  }));
 
-  // Detect horizontal overflow → show scroll-fade hint on mobile
-  requestAnimationFrame(()=>{
-    const cont=document.querySelector('.table-container');
-    const wrap=document.querySelector('.table-wrapper');
-    if(!cont||!wrap)return;
-    const has=cont.scrollWidth>cont.clientWidth+2;
-    wrap.classList.toggle('has-overflow',has);
-  });
+  renderPagination(filtered.length,totalPages);
 }
 
 function renderPagination(total,totalPages){
@@ -4693,6 +4738,24 @@ document.addEventListener('DOMContentLoaded',()=>{
       spawnRipple(t,e);
     },{passive:true});
   }
+
+  // Close action dropdowns when clicking outside
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.action-more')){
+      document.querySelectorAll('.action-more.open').forEach(x=>x.classList.remove('open'));
+    }
+  });
+  // Close dropdowns on scroll (avoid floating in wrong position)
+  let _scrollCloseTimer;
+  window.addEventListener('scroll',()=>{
+    clearTimeout(_scrollCloseTimer);
+    _scrollCloseTimer=setTimeout(()=>{
+      document.querySelectorAll('.action-more.open').forEach(x=>x.classList.remove('open'));
+    },50);
+  },{passive:true});
+  document.querySelector('.table-container')?.addEventListener('scroll',()=>{
+    document.querySelectorAll('.action-more.open').forEach(x=>x.classList.remove('open'));
+  },{passive:true});
 
   // ===== 🏠 HOME DASHBOARD — Live Clock + Hero info + Quick Actions =====
   function initHomeDashboard(){
